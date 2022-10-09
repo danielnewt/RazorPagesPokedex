@@ -1,0 +1,32 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Pokemon List";
+}
+
+<ul class="pokelister-pager">
+    <li>
+        @if(Model.CurrentPage > 1){
+            <a href="?page=@(Model.CurrentPage - 1)">&lt;Back</a>
+        }
+    </li>
+    <li>
+        @if (Model.CurrentPage < Model.PageCount)
+        {
+            <a href="?page=@(Model.CurrentPage + 1)">Next&gt;</a>
+        }
+    </li>
+</ul>
+<ul class="pokelister">
+    @foreach (var pokemon in Model.Pokemon)
+    {
+        <li class="pokeitem">
+            <img class="pokeitem-img" alt="Image of @pokemon.Name" src="@pokemon.SpriteImage"/>
+            <div>#@pokemon.Id @pokemon.Name</div>
+        </li>
+    }
+</ul>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
