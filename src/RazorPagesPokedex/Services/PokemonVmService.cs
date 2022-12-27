@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
+using PokeApiClient.Client;
 using RazorPagesPokedex.Models;
-using RazorPagesPokedex.PokemonApiClient;
-using System.Runtime.InteropServices;
-using System.Xml;
 
 namespace RazorPagesPokedex.Services
 {
@@ -12,11 +10,11 @@ namespace RazorPagesPokedex.Services
 		public const int PokemonPerPage = 6;
 		public int PageCount { get; } = (int)Math.Ceiling((double)PokemonLimit / PokemonPerPage);
 
-		private readonly IPokemonDataClient _dataClient;
+		private readonly IPokeApiClient _dataClient;
 		private readonly IMapper _mapper;
 
 		public PokemonVmService(
-			IPokemonDataClient dataClient,
+			IPokeApiClient dataClient,
 			IMapper mapper)
 		{
 			_dataClient = dataClient;
@@ -25,7 +23,7 @@ namespace RazorPagesPokedex.Services
 
 		public async Task<PokemonVm> GetPokemon(string name, CancellationToken cancellationToken)
         {
-			var pokemon = await _dataClient.GetPokemonByName(name, cancellationToken);
+			var pokemon = await _dataClient.GetPokemon(name, cancellationToken);
 			return _mapper.Map<PokemonVm>(pokemon);
         }
 
@@ -33,25 +31,10 @@ namespace RazorPagesPokedex.Services
         {
 			var offset = (page - 1) * PokemonPerPage;
 			var limit = Math.Min(PokemonPerPage, PokemonLimit - offset);
+
 			var pokemonList = await _dataClient.GetPokemonList(limit, offset, cancellationToken);
 
-			var vmList = new List<PokemonVm>(PokemonPerPage);
-			foreach (var i in pokemonList.Results)
-			{
-				vmList.Add(await GetPokemon(i.Name, cancellationToken));
-			}
-
-			return vmList;
-		}
-
-        public async Task PopulateCache(CancellationToken cancellationToken)
-        {
-			var pokemonList = await _dataClient.GetPokemonList(PokemonLimit, cancellationToken: cancellationToken);
-
-			foreach (var i in pokemonList.Results)
-			{
-				await _dataClient.GetPokemonByName(i.Name);
-			}
+			return pokemonList.Results.Select(x => _mapper.Map<PokemonVm>(x.Resource)).ToArray();
 		}
 	}
 }

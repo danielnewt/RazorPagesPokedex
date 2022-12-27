@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using PokeApiClient.Client.Models.Pokemon;
 using RazorPagesPokedex.Models;
-using RazorPagesPokedex.PokemonApiClient.Models;
 
 namespace RazorPagesPokedex.Mapping
 {

@@ -1,8 +1,6 @@
-using RazerPagesPokedex;
-using RazerPagesPokedex.PokemonApiClient;
-using RazorPagesPokedex.BackgroundServices;
+using PokeApiClient;
+using PokeApiClient.DependencyInjection;
 using RazorPagesPokedex.Extensions;
-using RazorPagesPokedex.PokemonApiClient;
 using RazorPagesPokedex.Services;
 using Serilog;
 using System.Text.Json;
@@ -10,7 +8,6 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 //config
-builder.Configure<ServiceConfig>();
 builder.Configure<JsonSerializerOptions>();
 
 // Add services to the container.
@@ -18,9 +15,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSingleton<IPokemonDataClient, PokemonDataClient>();
+
+builder.Services.AddPokeApiClient(options => builder.Configuration.GetSection(nameof(PokeApiOptions)).Bind(options));
 builder.Services.AddSingleton<IPokemonVmService, PokemonVmService>();
-builder.Services.AddHostedService<CacheWarmingBackgroundService>();
+
 builder.Host.UseSerilog((hostContext, logConfig) => logConfig.ReadFrom.Configuration(hostContext.Configuration));
 
 var app = builder.Build();
