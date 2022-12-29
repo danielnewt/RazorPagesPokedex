@@ -1,6 +1,5 @@
-﻿namespace PokeApiClient.Client.Models
+﻿namespace PokeApiClient.Client.Models;
+
+public abstract class BaseResource
 {
-	public abstract class BaseResource
-	{
-	}
 }

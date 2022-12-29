@@ -1,53 +1,52 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Collections.Concurrent;
 
-namespace PokeApiClient.Caching
+namespace PokeApiClient.Caching;
+
+internal class DictionaryDistributedCache : IDistributedCache
 {
-	internal class DictionaryDistributedCache : IDistributedCache
+	private readonly ConcurrentDictionary<string, byte[]> _cache = new();
+
+	public byte[]? Get(string key)
 	{
-		private readonly ConcurrentDictionary<string, byte[]> _cache = new();
+		return _cache.TryGetValue(key, out var value) ? value : null;
+	}
 
-		public byte[]? Get(string key)
-		{
-			return _cache.TryGetValue(key, out var value) ? value : null;
-		}
+	public Task<byte[]?> GetAsync(string key, CancellationToken token = default)
+	{
+		return Task.FromResult(Get(key));
+	}
 
-		public Task<byte[]?> GetAsync(string key, CancellationToken token = default)
-		{
-			return Task.FromResult(Get(key));
-		}
+	public void Refresh(string key)
+	{
+		//not relevent for dictionary implementation
+	}
 
-		public void Refresh(string key)
-		{
-			//not relevent for dictionary implementation
-		}
+	public Task RefreshAsync(string key, CancellationToken token = default)
+	{
+		//not relevent for dictionary implementation
+		return Task.CompletedTask;
+	}
 
-		public Task RefreshAsync(string key, CancellationToken token = default)
-		{
-			//not relevent for dictionary implementation
-			return Task.CompletedTask;
-		}
+	public void Remove(string key)
+	{
+		_ = _cache.Remove(key, out _);
+	}
 
-		public void Remove(string key)
-		{
-			_ = _cache.Remove(key, out _);
-		}
+	public Task RemoveAsync(string key, CancellationToken token = default)
+	{
+		Remove(key);
+		return Task.CompletedTask;
+	}
 
-		public Task RemoveAsync(string key, CancellationToken token = default)
-		{
-			Remove(key);
-			return Task.CompletedTask;
-		}
+	public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
+	{
+		_cache[key] = value;
+	}
 
-		public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
-		{
-			_cache[key] = value;
-		}
-
-		public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
-		{
-			Set(key, value, options);
-			return Task.CompletedTask;
-		}
+	public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
+	{
+		Set(key, value, options);
+		return Task.CompletedTask;
 	}
 }
