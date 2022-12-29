@@ -1,4 +1,4 @@
-﻿This project contains a simple (and minimal) library to query the poke api.
+﻿This project contains a simple library to query the poke api.
 
 This can be added to any project by calling the AddPokeApiClient() extension method on IServicesCollection.
 

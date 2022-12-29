@@ -1,7 +1,7 @@
-using PokeApiClient;
+using MediatR;
 using PokeApiClient.DependencyInjection;
+using PokeApiClient.Options;
 using RazorPagesPokedex.Extensions;
-using RazorPagesPokedex.Services;
 using Serilog;
 using System.Text.Json;
 
@@ -12,12 +12,12 @@ builder.Configure<JsonSerializerOptions>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
 
+builder.Services.AddMediatR(typeof(Program));
+
 builder.Services.AddPokeApiClient(options => builder.Configuration.GetSection(nameof(PokeApiOptions)).Bind(options));
-builder.Services.AddSingleton<IPokemonVmService, PokemonVmService>();
 
 builder.Host.UseSerilog((hostContext, logConfig) => logConfig.ReadFrom.Configuration(hostContext.Configuration));
 
