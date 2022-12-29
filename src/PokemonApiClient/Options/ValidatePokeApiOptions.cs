@@ -1,65 +1,64 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace PokeApiClient.Options
+namespace PokeApiClient.Options;
+
+public class ValidatePokeApiOptions : IValidateOptions<PokeApiOptions>
 {
-	public class ValidatePokeApiOptions : IValidateOptions<PokeApiOptions>
+	public ValidateOptionsResult Validate(string? name, PokeApiOptions options)
 	{
-		public ValidateOptionsResult Validate(string? name, PokeApiOptions options)
+		foreach (var v in ValidationRules)
 		{
-			foreach (var v in ValidationRules)
-			{
-				var failure = v(options);
+			var failure = v(options);
 
-				if (!string.IsNullOrWhiteSpace(failure))
-					return ValidateOptionsResult.Fail($"{nameof(ValidatePokeApiOptions)} Failure: {failure}");
-			}
-
-			return ValidateOptionsResult.Success;
+			if (!string.IsNullOrWhiteSpace(failure))
+				return ValidateOptionsResult.Fail($"{nameof(ValidatePokeApiOptions)} Failure: {failure}");
 		}
 
-		private Func<PokeApiOptions, string>[] ValidationRules => new[]{
-			ValidateNotNull,
-			ValidatePokeApiBaseUri,
-			ValidatePokeApiTimeoutSeconds,
-			ValidatePokeApiCacheMinutes
-		};
+		return ValidateOptionsResult.Success;
+	}
 
-		private string ValidateNotNull(PokeApiOptions options)
-		{
-			if (options == null)
-				return "Options is null";
+	private Func<PokeApiOptions, string>[] ValidationRules => new[]{
+		ValidateNotNull,
+		ValidatePokeApiBaseUri,
+		ValidatePokeApiTimeoutSeconds,
+		ValidatePokeApiCacheMinutes
+	};
 
-			return string.Empty;
-		}
+	private string ValidateNotNull(PokeApiOptions options)
+	{
+		if (options == null)
+			return "Options is null";
 
-		private string ValidatePokeApiBaseUri(PokeApiOptions options)
-		{
-			if (string.IsNullOrWhiteSpace(options.PokeApiBaseUri))
-				return $"{nameof(options.PokeApiBaseUri)} can not be null or empty";
+		return string.Empty;
+	}
 
-			if (!Uri.TryCreate(options.PokeApiBaseUri, UriKind.Absolute, out var uri))
-				return $"{nameof(options.PokeApiBaseUri)} must be a valid absolute uri";
+	private string ValidatePokeApiBaseUri(PokeApiOptions options)
+	{
+		if (string.IsNullOrWhiteSpace(options.PokeApiBaseUri))
+			return $"{nameof(options.PokeApiBaseUri)} can not be null or empty";
 
-			if (!uri.ToString().EndsWith("/"))
-				return $"{nameof(options.PokeApiBaseUri)} must end with a trailing forward slash";
+		if (!Uri.TryCreate(options.PokeApiBaseUri, UriKind.Absolute, out var uri))
+			return $"{nameof(options.PokeApiBaseUri)} must be a valid absolute uri";
 
-			return string.Empty;
-		}
+		if (!uri.ToString().EndsWith("/"))
+			return $"{nameof(options.PokeApiBaseUri)} must end with a trailing forward slash";
 
-		private string ValidatePokeApiTimeoutSeconds(PokeApiOptions options)
-		{
-			if (options.PokeApiTimeoutSeconds <= 0)
-				return $"{nameof(options.PokeApiTimeoutSeconds)} must be greater than 0";
+		return string.Empty;
+	}
 
-			return string.Empty;
-		}
+	private string ValidatePokeApiTimeoutSeconds(PokeApiOptions options)
+	{
+		if (options.PokeApiTimeoutSeconds <= 0)
+			return $"{nameof(options.PokeApiTimeoutSeconds)} must be greater than 0";
 
-		private string ValidatePokeApiCacheMinutes(PokeApiOptions options)
-		{
-			if (options.PokeApiCacheMinutes <= 0)
-				return $"{nameof(options.PokeApiCacheMinutes)} must be greater than 0";
+		return string.Empty;
+	}
 
-			return string.Empty;
-		}
+	private string ValidatePokeApiCacheMinutes(PokeApiOptions options)
+	{
+		if (options.PokeApiCacheMinutes <= 0)
+			return $"{nameof(options.PokeApiCacheMinutes)} must be greater than 0";
+
+		return string.Empty;
 	}
 }
