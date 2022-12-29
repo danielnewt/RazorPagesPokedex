@@ -1,6 +1,4 @@
-﻿using PokeApiClient.Client.Models;
-
-namespace PokeApiClient.Client.Models
+﻿namespace PokeApiClient.Client.Models
 {
 	public class ResourceList<T> : BaseResource where T : BaseResource
 	{

@@ -1,9 +1,8 @@
 ﻿using PokeApiClient.Client.Models;
-using PokeApiClient.Client.Models.Pokemon;
 
 namespace PokeApiClient.Client
 {
-    public interface IPokeApiClient
+	public interface IPokeApiClient
 	{
 		/// <summary>
 		/// Gets the resource requested by the url and deserializes the response body as type T.

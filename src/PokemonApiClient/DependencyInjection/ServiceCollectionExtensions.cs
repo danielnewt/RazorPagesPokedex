@@ -5,7 +5,7 @@ using PokeApiClient.Options;
 
 namespace PokeApiClient.DependencyInjection
 {
-    public static class ServiceCollectionExtensions
+	public static class ServiceCollectionExtensions
 	{
 		public static void AddPokeApiClient(this IServiceCollection services, Action<PokeApiOptions> options)
 		{

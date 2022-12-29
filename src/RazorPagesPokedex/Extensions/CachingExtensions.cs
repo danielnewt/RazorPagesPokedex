@@ -38,7 +38,7 @@ namespace RazorPagesPokedex.Extensions
 				return item; //item is null, no need to set cache
 
 			await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(item, jsonOptions), cacheOptions, cancellationToken);
-			
+
 			return item;
 		}
 	}

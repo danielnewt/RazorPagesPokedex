@@ -25,7 +25,7 @@ namespace PokeApiClient.Client
 			_serializerOptions = serializerOptions ?? new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
 			var config = options?.Value ?? new PokeApiOptions();
-			if(config.PokeApiBaseUri != null)
+			if (config.PokeApiBaseUri != null)
 				_httpClient.BaseAddress = new Uri(config.PokeApiBaseUri, UriKind.Absolute);
 			_httpClient.Timeout = TimeSpan.FromSeconds(config.PokeApiTimeoutSeconds);
 
@@ -40,12 +40,12 @@ namespace PokeApiClient.Client
 		{
 			var path = $"{GetPathForResource<T>()}?limit={limit}&offset={offset}";
 
-			var resourceList = await GetResource<ResourceList<T>>(path , cancellationToken);
+			var resourceList = await GetResource<ResourceList<T>>(path, cancellationToken);
 
 			if (!includeResource)
 				return resourceList;
 
-			foreach(var r in resourceList.Results)
+			foreach (var r in resourceList.Results)
 			{
 				r.Resource = await GetResource<T>(r.Url, cancellationToken);
 			}
@@ -69,7 +69,7 @@ namespace PokeApiClient.Client
 		{
 			try
 			{
-				if(!Uri.TryCreate(url, UriKind.Absolute, out var absoluteUri) && 
+				if (!Uri.TryCreate(url, UriKind.Absolute, out var absoluteUri) &&
 					!Uri.TryCreate(_httpClient.BaseAddress, url, out absoluteUri))
 					throw new ArgumentException($"Failed to create valid url from value: {url}", nameof(url));
 

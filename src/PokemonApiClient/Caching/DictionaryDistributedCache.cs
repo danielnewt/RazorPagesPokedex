@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace PokeApiClient.Caching
 {
 	internal class DictionaryDistributedCache : IDistributedCache
 	{
-		private readonly ConcurrentDictionary<string, byte[]> _cache = new ();
+		private readonly ConcurrentDictionary<string, byte[]> _cache = new();
 
 		public byte[]? Get(string key)
 		{
