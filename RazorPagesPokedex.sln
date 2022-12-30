@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeApiClient", "src\Pokemo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPagesPokedex", "src\RazorPagesPokedex\RazorPagesPokedex.csproj", "{FEDFD6B3-B225-4303-A553-3F62AEC78AC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeApiClientTests", "test\PokeApiClientTests\PokeApiClientTests.csproj", "{729492B9-5BA8-4047-A98A-2F4FB4191FCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FEDFD6B3-B225-4303-A553-3F62AEC78AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEDFD6B3-B225-4303-A553-3F62AEC78AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEDFD6B3-B225-4303-A553-3F62AEC78AC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{729492B9-5BA8-4047-A98A-2F4FB4191FCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{729492B9-5BA8-4047-A98A-2F4FB4191FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{729492B9-5BA8-4047-A98A-2F4FB4191FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{729492B9-5BA8-4047-A98A-2F4FB4191FCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

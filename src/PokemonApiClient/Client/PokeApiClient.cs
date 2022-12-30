@@ -12,17 +12,15 @@ public class PokeApiClient : IPokeApiClient
 	private readonly HttpClient _httpClient;
 	private readonly IDistributedCache _distributedCache;
 	private readonly DistributedCacheEntryOptions _cacheOptions;
-	private readonly JsonSerializerOptions _serializerOptions;
+	private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
 	public PokeApiClient(
 		HttpClient httpClient,
-		IDistributedCache? distributedCache,
-		IOptions<PokeApiOptions>? options,
-		JsonSerializerOptions? serializerOptions)
+		IDistributedCache? distributedCache = null,
+		IOptions<PokeApiOptions>? options = null)
 	{
 		_httpClient = httpClient;
 		_distributedCache = distributedCache ?? new DictionaryDistributedCache();
-		_serializerOptions = serializerOptions ?? new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
 		var config = options?.Value ?? new PokeApiOptions();
 		if (config.PokeApiBaseUri != null)
@@ -60,7 +58,7 @@ public class PokeApiClient : IPokeApiClient
 		if (string.IsNullOrWhiteSpace(id))
 			throw new ArgumentNullException(nameof(id));
 
-		var path = $"{GetPathForResource<T>}/{id}";
+		var path = $"{GetPathForResource<T>()}/{id}/";
 		return await GetResource<T>(path, cancellationToken);
 	}
 

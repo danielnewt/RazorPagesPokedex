@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
 {
 	public static void AddPokeApiClient(this IServiceCollection services, Action<PokeApiOptions> options)
 	{
+		services.AddHttpClient();
 		services.AddOptions<PokeApiOptions>()
 			.Configure(options)
 			.ValidateOnStart();

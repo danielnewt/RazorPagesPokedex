@@ -12,11 +12,8 @@ builder.Configure<JsonSerializerOptions>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddHttpClient();
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddMediatR(typeof(Program));
-
 builder.Services.AddPokeApiClient(options => builder.Configuration.GetSection(nameof(PokeApiOptions)).Bind(options));
 
 builder.Host.UseSerilog((hostContext, logConfig) => logConfig.ReadFrom.Configuration(hostContext.Configuration));
