@@ -44,7 +44,7 @@ internal class TestHttpMessageHandler : HttpMessageHandler
 		iOptions.Value.Returns(options);
 
 		var messageHandler = new TestHttpMessageHandler(responseMessages);
-		var apiClient = new PokeApiClient.Client.PokeApiClient(new HttpClient(messageHandler), null, iOptions);
+		var apiClient = new PokeApiClient.Client.PokeApiClient(new HttpClient(messageHandler), options: iOptions);
 		return new(apiClient, messageHandler);
 	}
 

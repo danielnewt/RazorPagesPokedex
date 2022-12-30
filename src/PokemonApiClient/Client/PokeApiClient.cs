@@ -90,12 +90,15 @@ public class PokeApiClient : IPokeApiClient
 			if (string.IsNullOrWhiteSpace(stringValue))
 				throw new ApiResponseException($"Unable to determine value for uri: {absoluteUri}");
 
+			await _distributedCache.SetStringAsync(cacheKey, stringValue, _cacheOptions, cancellationToken);
+
 			var deserializedResult = JsonSerializer.Deserialize<T>(stringValue, _serializerOptions);
 
-			if (deserializedResult != null)
-				await _distributedCache.SetStringAsync(cacheKey, stringValue, _cacheOptions, cancellationToken);
-
 			return deserializedResult ?? throw new ApiResponseException($"Unable to parse value for query: {absoluteUri}");
+		}
+		catch (ApiResponseException)
+		{
+			throw;
 		}
 		catch (HttpRequestException e)
 		{

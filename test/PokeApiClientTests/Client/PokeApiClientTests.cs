@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using PokeApiClient.Client;
 using PokeApiClient.Client.Models;
 using PokeApiClient.Client.Models.Pokemon;
 using PokeApiClient.Options;
@@ -118,8 +119,6 @@ public class PokeApiClientTests
 		messageHandler.RequestCountForUrl(expectedUrl).Should().Be(1);
 		messageHandler.TotalRequestCount().Should().Be(totalRequests);
 
-
-
 		//a second call should be cached which should result in the same result without any additional requests
 		result = await sut.GetResourceList<Pokemon>(limit, offset, includeResource);
 
@@ -127,5 +126,62 @@ public class PokeApiClientTests
 
 		messageHandler.RequestCountForUrl(expectedUrl).Should().Be(1);
 		messageHandler.TotalRequestCount().Should().Be(totalRequests);
+	}
+
+	[Fact]
+	public async Task GetResource_UrlInvalid()
+	{
+		var response = HttpHelper.BuildResponse(HttpStatusCode.OK, HttpHelper.PokemonBulbasaurResponse);
+		var (sut, messageHandler) = HttpHelper.GetPokeApiClientWithHandler(_pokeApiOptions, response);
+
+		var url = "http://not a valid url";
+		var ex = await Assert.ThrowsAsync<ApiResponseException>(() => sut.GetResource<Pokemon>(url));
+
+		ex.Should().NotBeNull();
+		var innerMessage = "Failed to create valid url from value: http://not a valid url (Parameter 'url')";
+		ex.Message.Should().Be($"GET request failed due to unexpected error: {innerMessage}");
+		ex.InnerException.Should().NotBeNull();
+		ex.InnerException.Should().BeOfType<ArgumentException>();
+		ex.InnerException!.Message.Should().Be(innerMessage);
+
+		messageHandler.RequestCountForUrl(url).Should().Be(0);
+		messageHandler.TotalRequestCount().Should().Be(0);
+	}
+
+	[Fact]
+	public async Task GetResource_ResponeIsEmpty()
+	{
+		var response = HttpHelper.BuildResponse(HttpStatusCode.OK);
+		var (sut, messageHandler) = HttpHelper.GetPokeApiClientWithHandler(_pokeApiOptions, response);
+
+		var url = "https://test/";
+		var ex = await Assert.ThrowsAsync<ApiResponseException>(() => sut.GetResource<Pokemon>(url));
+
+		ex.Should().NotBeNull();
+		ex.Message.Should().Be($"Unable to determine value for uri: {url}");
+		ex.InnerException.Should().BeNull();
+
+		messageHandler.RequestCountForUrl(url).Should().Be(1);
+		messageHandler.TotalRequestCount().Should().Be(1);
+	}
+
+	[Fact]
+	public async Task GetResource_ResponeIsUnsuccessful()
+	{
+		var statusCode = HttpStatusCode.BadRequest;
+		var response = HttpHelper.BuildResponse(statusCode);
+		var (sut, messageHandler) = HttpHelper.GetPokeApiClientWithHandler(_pokeApiOptions, response);
+
+		var url = "https://test/";
+		var ex = await Assert.ThrowsAsync<ApiResponseException>(() => sut.GetResource<Pokemon>(url));
+
+		ex.Should().NotBeNull();
+		ex.Message.Should().Be($"GET response contained unexpected status code: {statusCode}");
+		ex.InnerException.Should().NotBeNull();
+		ex.InnerException.Should().BeOfType<HttpRequestException>();
+		ex.InnerException!.Message.Should().Be("Response status code does not indicate success: 400 (Bad Request).");
+
+		messageHandler.RequestCountForUrl(url).Should().Be(1);
+		messageHandler.TotalRequestCount().Should().Be(1);
 	}
 }
